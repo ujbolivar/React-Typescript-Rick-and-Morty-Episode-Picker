@@ -1,6 +1,6 @@
 import React from "react";
 import { Store } from "./Store";
-import { IEpisode, IAction } from './interfaces'
+import { IEpisode, IAction } from "./interfaces";
 
 export default function App(): JSX.Element {
   const { state, dispatch } = React.useContext(Store);
@@ -20,19 +20,38 @@ export default function App(): JSX.Element {
     });
   };
 
-  const toggleFavAction = (episode: IEpisode): IAction => dispatch({
-    tpye: 'ADD_FAV',
-    payload: episode
-  })
+  const toggleFavAction = (episode: IEpisode): IAction => {
+    const episodeInFav = state.favorites.includes(episode);
+    let dispatchObj = {
+      type: "ADD_FAV",
+      payload: episode
+    };
+    if (episodeInFav) {
+      const favWithoutEpisode = state.favorites.filter(
+        (fav: IEpisode) => fav.id !== episode.id
+      );
+      dispatchObj = {
+        type: "REMOVE_FAV",
+        payload: favWithoutEpisode
+      };
+    }
+    return dispatch(dispatchObj);
+  };
 
+  const count = state.favorites.length
+
+  console.log(state);
   return (
     <React.Fragment>
       <header className="header">
         <h1>Rick and Morty</h1>
-        <p>Pick your favorite episode!!!</p>
+        <p className="p">Pick your favorite episode!!!
+          <br/>
+          Favorite Episodes: {count}
+        </p>
       </header>
       <section className="episode-layout">
-        {state.episodes.map((episode: any) => {
+        {state.episodes.map((episode: IEpisode) => {
           return (
             <section key={episode.id} className="episode-box">
               <img
@@ -45,7 +64,11 @@ export default function App(): JSX.Element {
                   Season: {episode.season} Number: {episode.number}
                 </div>
                 <button type="button" onClick={() => toggleFavAction(episode)}>
-                  Fav
+                  {state.favorites.find(
+                    (fav: IEpisode) => fav.id === episode.id
+                  )
+                    ? "Unfav"
+                    : "Fav"}
                 </button>
               </section>
             </section>

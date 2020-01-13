@@ -32,3 +32,8 @@ body {
   position: sticky;
   top: 0;
 }
+
+.p {
+  justify-content: space-evenly;
+  flex: content;
+}
