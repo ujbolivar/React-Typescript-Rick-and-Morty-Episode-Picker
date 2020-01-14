@@ -2,6 +2,8 @@ import React from "react";
 import { Store } from "./Store";
 import { IEpisode, IAction } from "./interfaces";
 
+const EpisodeList = React.lazy<any>(() => import("./EpisodeList"));
+
 export default function App(): JSX.Element {
   const { state, dispatch } = React.useContext(Store);
 
@@ -35,46 +37,34 @@ export default function App(): JSX.Element {
         payload: favWithoutEpisode
       };
     }
+
     return dispatch(dispatchObj);
   };
 
-  const count = state.favorites.length
+  const props = {
+    episodes: state.episodes,
+    toggleFavAction,
+    favorites: state.favorites
+  }
+
+  const count = state.favorites.length;
 
   console.log(state);
   return (
     <React.Fragment>
       <header className="header">
         <h1>Rick and Morty</h1>
-        <p className="p">Pick your favorite episode!!!
-          <br/>
+        <p className="p">
+          Pick your favorite episode!!!
+          <br />
           Favorite Episodes: {count}
         </p>
       </header>
+      <React.Suspense fallback={<div>loading...</div>}>
       <section className="episode-layout">
-        {state.episodes.map((episode: IEpisode) => {
-          return (
-            <section key={episode.id} className="episode-box">
-              <img
-                src={episode.image.medium}
-                alt={`Rick and Morty ${episode.name}`}
-              />
-              <div>{episode.name}</div>
-              <section>
-                <div>
-                  Season: {episode.season} Number: {episode.number}
-                </div>
-                <button type="button" onClick={() => toggleFavAction(episode)}>
-                  {state.favorites.find(
-                    (fav: IEpisode) => fav.id === episode.id
-                  )
-                    ? "Unfav"
-                    : "Fav"}
-                </button>
-              </section>
-            </section>
-          );
-        })}
+        <EpisodeList {...props} />
       </section>
+      </React.Suspense>
     </React.Fragment>
   );
 }
