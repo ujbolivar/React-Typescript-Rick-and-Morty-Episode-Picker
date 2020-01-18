@@ -10,7 +10,7 @@ export const fetchDataAction = async (dispatch: any) => {
       payload: dataJSON._embedded.episodes
     });
   };
-export  const toggleFavAction = (state: IState, dispatch: any, episode: IEpisode | any): IAction => {
+export const toggleFavAction = (state: IState, dispatch: any, episode: IEpisode | any): IAction => {
     const episodeInFav = state.favorites.includes(episode);
     let dispatchObj = {
       type: "ADD_FAV",
